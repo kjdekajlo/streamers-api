@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Streamer } from './streamer.schema';
 import * as mongoose from 'mongoose';
@@ -21,6 +25,12 @@ export class StreamerService {
   }
 
   async findById(id: string): Promise<Streamer> {
+    const isValidId = mongoose.isValidObjectId(id);
+
+    if (!isValidId) {
+      throw new BadRequestException('Please enter correct id');
+    }
+
     const streamer = await this.streamerModel.findById(id);
 
     if (!streamer) {
@@ -38,11 +48,11 @@ export class StreamerService {
   }
 
   async vote(id: string): Promise<Streamer> {
-    const streamer = this.findById(id);
+    const streamer = await this.findById(id);
 
-    (await streamer).upvotes++;
+    streamer.upvotes++;
 
-    const res = await this.create(await streamer);
+    const res = await this.create(streamer);
     return res;
   }
 }

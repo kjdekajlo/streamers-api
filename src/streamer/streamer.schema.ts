@@ -1,4 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+export enum Platform {
+  'youtube' = 'youtube',
+  'twitch' = 'twitch',
+  'tiktok' = 'tiktok',
+  'kick' = 'kick',
+  'rumble' = 'rumble',
+}
 
 @Schema({
   timestamps: true,
