@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 export enum Platform {
   'youtube' = 'youtube',
   'twitch' = 'twitch',
@@ -7,9 +8,7 @@ export enum Platform {
   'rumble' = 'rumble',
 }
 
-@Schema({
-  timestamps: true,
-})
+@Schema({})
 export class Streamer {
   @Prop()
   name: string;
@@ -24,7 +23,7 @@ export class Streamer {
   upvotes: number;
 
   @Prop()
-  platform: 'youtube' | 'twitch' | 'tiktok' | 'kick' | 'rumble';
+  platform: Platform;
 }
 
 export const StreamerSchema = SchemaFactory.createForClass(Streamer);

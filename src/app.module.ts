@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StreamerModule } from './streamer/streamer.module';
@@ -14,7 +12,5 @@ import { StreamerModule } from './streamer/streamer.module';
     MongooseModule.forRoot(process.env.DB_URL),
     StreamerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
