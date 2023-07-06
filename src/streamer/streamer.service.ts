@@ -6,12 +6,14 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Streamer } from './streamer.schema';
 import * as mongoose from 'mongoose';
+import { VotesGateway } from 'src/gateway/gateway';
 
 @Injectable()
 export class StreamerService {
   constructor(
     @InjectModel(Streamer.name)
     private streamerModel: mongoose.Model<Streamer>,
+    private readonly votesGateway: VotesGateway,
   ) {}
 
   async findAll(): Promise<Streamer[]> {
@@ -21,6 +23,7 @@ export class StreamerService {
 
   async create(streamer: Streamer): Promise<Streamer> {
     const res = await this.streamerModel.create(streamer);
+    this.emitDataChanged();
     return res;
   }
 
@@ -41,6 +44,7 @@ export class StreamerService {
   }
 
   async updateById(id: string, streamer: Streamer): Promise<Streamer> {
+    this.emitDataChanged();
     return await this.streamerModel.findByIdAndUpdate(id, streamer, {
       new: true,
       runValidators: true,
@@ -54,5 +58,9 @@ export class StreamerService {
 
     const res = await this.create(streamer);
     return res;
+  }
+
+  async emitDataChanged() {
+    this.votesGateway.onStreamersChanged();
   }
 }
