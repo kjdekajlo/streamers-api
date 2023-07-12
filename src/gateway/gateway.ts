@@ -1,24 +1,34 @@
-import { OnModuleInit } from '@nestjs/common';
 import {
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })
-export class VotesGateway implements OnModuleInit {
+export class VotesGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log('Connected:', socket.id);
-    });
+  afterInit(server: Server) {
+    console.log('Initialized');
+  }
+
+  handleConnection(client: Socket) {
+    console.log('Connected:', client.id);
+  }
+
+  handleDisconnect(client: Socket, ...args: any[]) {
+    console.log('Disconnected:', client.id);
   }
 
   @SubscribeMessage('onStreamersChanged')
-  onStreamersChanged() {
+  async onStreamersChanged() {
     this.server.emit('onStreamersChanged');
   }
 }
