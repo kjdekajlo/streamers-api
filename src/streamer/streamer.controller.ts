@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Put, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { StreamerService } from './streamer.service';
 import { Streamer } from './streamer.schema';
 import { CreateStreamerDto } from './dto/create-streamer.dto';
@@ -64,7 +72,31 @@ export class StreamerController {
 
   @ApiTags('streamer')
   @ApiOperation({
-    summary: 'Vote for a streamer by id. / Increase their upvotes by 1.',
+    summary: 'Delete a streamer by their id.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully deleted.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Please enter correct id.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Streamer not found.',
+  })
+  @Delete('streamer/:id')
+  async deleteStreamerById(
+    @Param('id')
+    id: string,
+  ): Promise<Streamer[]> {
+    return this.streamerService.deleteById(id);
+  }
+
+  @ApiTags('streamer')
+  @ApiOperation({
+    summary: 'Upvote a streamer by id. / Give a streamer one like ',
   })
   @ApiResponse({
     status: 200,
@@ -78,11 +110,36 @@ export class StreamerController {
     status: 404,
     description: 'Streamer not found.',
   })
-  @Put('streamer/:id/vote')
-  async voteStreamer(
+  @Put('streamer/:id/upvote')
+  async upvoteStreamerById(
     @Param('id')
     id: string,
   ): Promise<Streamer> {
-    return this.streamerService.vote(id);
+    return this.streamerService.upvote(id);
+  }
+
+  @ApiTags('streamer')
+  @ApiOperation({
+    summary:
+      "Downvote a streamer by id. / Decrease the streamer's likes by one",
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully read.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Please enter correct id.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Streamer not found.',
+  })
+  @Put('streamer/:id/downvote')
+  async downvoteStreamerById(
+    @Param('id')
+    id: string,
+  ): Promise<Streamer> {
+    return this.streamerService.downvote(id);
   }
 }
